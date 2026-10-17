@@ -1,0 +1,289 @@
+{
+  "info": {
+    "_postman_id": "library-api-collection-2026",
+    "name": "Library Management API (Express.js + SQL)",
+    "description": "Koleksi API Perpustakaan Lengkap: Buku (CRUD + Cover Upload), Kategori, Anggota/User, Peminjaman, Pengembalian, Denda Otomatis & Pembayaran, serta Dashboard Statistik.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "member_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@perpustakaan.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login Member",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"budi@gmail.com\",\n  \"password\": \"member123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Register Member Baru",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Andi Wijaya\",\n  \"email\": \"andi@gmail.com\",\n  \"password\": \"password123\",\n  \"telepon\": \"081233445566\",\n  \"alamat\": \"Jl. Sudirman No 10\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/auth/register", "host": ["{{base_url}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Get Profile Saya",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{member_token}}" }],
+            "url": { "raw": "{{base_url}}/auth/profile", "host": ["{{base_url}}"], "path": ["auth", "profile"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Buku (Books)",
+      "item": [
+        {
+          "name": "List Semua Buku (Filter & Pagination)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/books?page=1&limit=10&search=&kategori_id=&tersedia_hanya=false",
+              "host": ["{{base_url}}"],
+              "path": ["books"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "" },
+                { "key": "kategori_id", "value": "" },
+                { "key": "tersedia_hanya", "value": "false" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail Buku",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/books/1", "host": ["{{base_url}}"], "path": ["books", "1"] }
+          }
+        },
+        {
+          "name": "Tambah Buku (Upload Cover Gambar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "judul", "value": "Refactoring: Improving the Design of Existing Code", "type": "text" },
+                { "key": "penulis", "value": "Martin Fowler", "type": "text" },
+                { "key": "penerbit", "value": "Addison-Wesley", "type": "text" },
+                { "key": "tahun_terbit", "value": "2018", "type": "text" },
+                { "key": "isbn", "value": "978-0134757681", "type": "text" },
+                { "key": "jumlah_halaman", "value": "448", "type": "text" },
+                { "key": "stok", "value": "4", "type": "text" },
+                { "key": "lokasi_rak", "value": "Rak TK-03", "type": "text" },
+                { "key": "kategori_id", "value": "1", "type": "text" },
+                { "key": "deskripsi", "value": "Panduan teknik refactoring kode program.", "type": "text" },
+                { "key": "cover", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/books", "host": ["{{base_url}}"], "path": ["books"] }
+          }
+        },
+        {
+          "name": "Edit Buku",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "judul", "value": "Refactoring Edisi 2", "type": "text" },
+                { "key": "stok", "value": "5", "type": "text" },
+                { "key": "cover", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/books/1", "host": ["{{base_url}}"], "path": ["books", "1"] }
+          }
+        },
+        {
+          "name": "Delete Buku",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/books/1", "host": ["{{base_url}}"], "path": ["books", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Kategori (Categories)",
+      "item": [
+        {
+          "name": "List Kategori",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/categories", "host": ["{{base_url}}"], "path": ["categories"] }
+          }
+        },
+        {
+          "name": "Tambah Kategori",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama_kategori\": \"Psikologi & Filsafat\",\n  \"deskripsi\": \"Koleksi buku filsafat dan kajian psikologi.\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/categories", "host": ["{{base_url}}"], "path": ["categories"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Peminjaman (Borrowings)",
+      "item": [
+        {
+          "name": "Pinjam Buku",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{member_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"buku_id\": 1,\n  \"durasi_hari\": 7,\n  \"catatan\": \"Pinjam untuk tugas kuliah\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/borrowings", "host": ["{{base_url}}"], "path": ["borrowings"] }
+          }
+        },
+        {
+          "name": "Riwayat Peminjaman Saya",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{member_token}}" }],
+            "url": { "raw": "{{base_url}}/borrowings/my-borrowings", "host": ["{{base_url}}"], "path": ["borrowings", "my-borrowings"] }
+          }
+        },
+        {
+          "name": "List Semua Peminjaman (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/borrowings?status=DIPINJAM", "host": ["{{base_url}}"], "path": ["borrowings"] }
+          }
+        },
+        {
+          "name": "Kembalikan Buku (Hitung Denda Otomatis)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"catatan_pengembalian\": \"Kondisi buku baik dan rapi\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/borrowings/1/return", "host": ["{{base_url}}"], "path": ["borrowings", "1", "return"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Denda & Pembayaran (Fines)",
+      "item": [
+        {
+          "name": "List Semua Denda (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/fines?status_pembayaran=BELUM_LUNAS", "host": ["{{base_url}}"], "path": ["fines"] }
+          }
+        },
+        {
+          "name": "Denda Saya (Member)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{member_token}}" }],
+            "url": { "raw": "{{base_url}}/fines/my-fines", "host": ["{{base_url}}"], "path": ["fines", "my-fines"] }
+          }
+        },
+        {
+          "name": "Pelunasan Denda",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metode_pembayaran\": \"TUNAI\",\n  \"catatan\": \"Pembayaran tunai di meja kasir\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/fines/1/pay", "host": ["{{base_url}}"], "path": ["fines", "1", "pay"] }
+          }
+        },
+        {
+          "name": "Periksa Peminjaman Terlambat (Auto Check Overdue)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/fines/check-overdue", "host": ["{{base_url}}"], "path": ["fines", "check-overdue"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Dashboard Statistik",
+      "item": [
+        {
+          "name": "Statistik Perpustakaan",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/dashboard/stats", "host": ["{{base_url}}"], "path": ["dashboard", "stats"] }
+          }
+        }
+      ]
+    }
+  ]
+}
