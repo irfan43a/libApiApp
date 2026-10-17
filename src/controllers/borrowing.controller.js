@@ -278,7 +278,8 @@ const getAllBorrowings = async (req, res, next) => {
     }
 
     if (search) {
-      where.kode_pinjam = { [Op.like]: `%${search}%` };
+      const likeOp = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like;
+      where.kode_pinjam = { [likeOp]: `%${search}%` };
     }
 
     const { count, rows } = await Borrowing.findAndCountAll({

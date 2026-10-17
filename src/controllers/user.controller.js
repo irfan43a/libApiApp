@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { User, Borrowing, Book, Fine } = require('../models');
+const { User, Borrowing, Book, Fine, sequelize } = require('../models');
 const { successResponse, paginatedResponse, errorResponse } = require('../utils/response');
 
 /**
@@ -15,10 +15,11 @@ const getAllUsers = async (req, res, next) => {
     if (role) where.role = role;
     if (status) where.status = status;
     if (search) {
+      const likeOp = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like;
       where[Op.or] = [
-        { nama: { [Op.like]: `%${search}%` } },
-        { email: { [Op.like]: `%${search}%` } },
-        { telepon: { [Op.like]: `%${search}%` } },
+        { nama: { [likeOp]: `%${search}%` } },
+        { email: { [likeOp]: `%${search}%` } },
+        { telepon: { [likeOp]: `%${search}%` } },
       ];
     }
 

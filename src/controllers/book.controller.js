@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
 const path = require('path');
 const fs = require('fs');
-const { Book, Category, Borrowing } = require('../models');
+const { Book, Category, Borrowing, sequelize } = require('../models');
 const { successResponse, paginatedResponse, errorResponse } = require('../utils/response');
 
 /**
@@ -51,11 +51,12 @@ const getAllBooks = async (req, res, next) => {
     }
 
     if (search) {
+      const likeOp = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like;
       where[Op.or] = [
-        { judul: { [Op.like]: `%${search}%` } },
-        { penulis: { [Op.like]: `%${search}%` } },
-        { penerbit: { [Op.like]: `%${search}%` } },
-        { isbn: { [Op.like]: `%${search}%` } },
+        { judul: { [likeOp]: `%${search}%` } },
+        { penulis: { [likeOp]: `%${search}%` } },
+        { penerbit: { [likeOp]: `%${search}%` } },
+        { isbn: { [likeOp]: `%${search}%` } },
       ];
     }
 
