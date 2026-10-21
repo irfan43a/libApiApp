@@ -159,6 +159,17 @@ npm run seed
   node tests/test-api.js
   ```
 
+### 5. Dokumentasi API Interaktif (Swagger UI)
+Setelah server berjalan, Anda dapat mengakses dan mencoba seluruh endpoint API langsung melalui browser menggunakan Swagger UI:
+- **Swagger UI**: `http://localhost:5000/api/docs` (atau shortcut `http://localhost:5000/docs`)
+- **OpenAPI JSON Spec**: `http://localhost:5000/api/docs/json`
+
+> 💡 **Tips Pengujian di Swagger**:
+> 1. Jalankan endpoint `POST /api/auth/login` (misal dengan akun admin atau member).
+> 2. Salin nilai `token` dari respon.
+> 3. Klik tombol **Authorize** di pojok kanan atas Swagger UI, lalu tempel token Anda (`Bearer <token>`).
+> 4. Anda sekarang dapat mencoba semua endpoint yang membutuhkan autentikasi langsung dari browser!
+
 ---
 
 ## 👤 Akun Default Hasil Seeding

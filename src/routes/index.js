@@ -8,6 +8,10 @@ const bookRoutes = require('./book.routes');
 const borrowingRoutes = require('./borrowing.routes');
 const fineRoutes = require('./fine.routes');
 const dashboardRoutes = require('./dashboard.routes');
+const docsRoutes = require('./docs.routes');
+
+// Swagger API Documentation
+router.use('/docs', docsRoutes);
 
 // Mount routes
 router.use('/auth', authRoutes);

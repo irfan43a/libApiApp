@@ -22,9 +22,14 @@ app.get('/', (req, res) => {
     success: true,
     message: 'Selamat datang di API Sistem Manajemen Perpustakaan (Library Management System)',
     version: '1.0.0',
-    documentation: '/api/docs or README.md',
+    documentation: '/api/docs',
     server_time: new Date().toISOString(),
   });
+});
+
+// Shortcut redirect to Swagger UI
+app.get('/docs', (req, res) => {
+  res.redirect('/api/docs');
 });
 
 // API Routes
